@@ -1,0 +1,8 @@
+{
+    "domain": "denkovi",
+    "name": "Denkovi",
+    "documentation": "https://github.com/rdehuyss/homeassistant-custom_components-denkovi",
+    "dependencies": [],
+    "codeowners": ["@rdehuyss"],
+    "requirements": []
+}
