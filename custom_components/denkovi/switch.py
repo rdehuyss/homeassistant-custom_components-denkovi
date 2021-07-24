@@ -10,7 +10,7 @@ from datetime import timedelta
 import requests
 import voluptuous as vol
 
-from homeassistant.components.switch import (SwitchDevice, PLATFORM_SCHEMA)
+from homeassistant.components.switch import (SwitchEntity, PLATFORM_SCHEMA)
 from homeassistant.const import (CONF_NAME, CONF_RESOURCE, CONF_PASSWORD)
 from homeassistant.util import Throttle
 import homeassistant.helpers.config_validation as cv
@@ -91,7 +91,7 @@ class DenkoviModule():
             raise DenkoviConnectException('update - No route to device {}'.format(self._resource))
 
 
-class DenkoviSwitchBase(SwitchDevice):
+class DenkoviSwitchBase(SwitchEntity):
     """Representation of an Denkovi switch."""
 
     def __init__(self, denkoviModule, name):
@@ -157,7 +157,7 @@ class DenkoviSwitchRelay(DenkoviSwitchBase):
             status_value = int(self._invert)
             self._state = self._denkoviModule.get_state(self._relay) != status_value
             self._available = True
-        except DenkoviException:
+        except DenkoviException as e:
             _LOGGER.error("Error updating state for relay %s, %s", str(self._relay), str(e))
             self._available = False
     
