@@ -4,6 +4,6 @@
     "documentation": "https://github.com/rdehuyss/homeassistant-custom_components-denkovi",
     "dependencies": [],
     "codeowners": ["@rdehuyss"],
-    "version": "2.0.1",
+    "version": "2.0.2",
     "requirements": []
 }
