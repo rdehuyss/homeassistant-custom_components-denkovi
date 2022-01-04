@@ -40,9 +40,10 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up the Denkovi switches."""
     resource = config.get(CONF_RESOURCE)
     password = config.get(CONF_PASSWORD)
+    name = config.get(CONF_NAME)
 
     try:
-        denkoviModule = DenkoviModule(resource, password)
+        denkoviModule = DenkoviModule(resource, password, name)
     except DenkoviException as e:
         _LOGGER.error(str(e))
         return False
@@ -56,10 +57,15 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
 
 class DenkoviModule():
 
-    def __init__(self, resource, password):
+    def __init__(self, resource, password, name):
         self._resource = resource
         self._password = password
+        self._name = name
         self.update()
+
+    @property
+    def name(self):
+        return self._name
 
     def turn_on_or_off(self, relay, payload):
         try:
@@ -94,12 +100,18 @@ class DenkoviModule():
 class DenkoviSwitchBase(SwitchEntity):
     """Representation of an Denkovi switch."""
 
-    def __init__(self, denkoviModule, name):
+    def __init__(self, denkoviModule, name, relay):
         """Initialize the switch."""
         self._denkoviModule = denkoviModule
+        self._relay = relay
         self._name = name
         self._state = None
         self._available = True
+
+    @property
+    def unique_id(self):
+        """Return the unique ID."""
+        return f"{self._denkoviModule.name}_{self._relay}"
 
     @property
     def name(self):
@@ -122,8 +134,7 @@ class DenkoviSwitchRelay(DenkoviSwitchBase):
 
     def __init__(self, denkoviModule, name, relay, invert):
         """Initialize the switch."""
-        super().__init__(denkoviModule, name)
-        self._relay = relay
+        super().__init__(denkoviModule, name, relay)
         self._invert = invert
         self.update()
 
@@ -160,7 +171,7 @@ class DenkoviSwitchRelay(DenkoviSwitchBase):
         except DenkoviException as e:
             _LOGGER.error("Error updating state for relay %s, %s", str(self._relay), str(e))
             self._available = False
-    
+
 class DenkoviException(Exception):
     pass
 
